@@ -1,0 +1,281 @@
+---
+layout: post
+title: Web前端开发工作流搭建
+tags:
+- 未分类
+status: publish
+type: post
+published: true
+meta:
+  _yoast_wpseo_linkdex: '58'
+  _edit_last: '1'
+  _yoast_wpseo_focuskw: Yeoman yeoman.io grunt bower 工作流 前端开发 git git-deploy amazon
+    ec2
+  _yoast_wpseo_title: ''
+  _yoast_wpseo_metadesc: 本文组合使用Yeoman，Grunt，Git搭建了一个便捷网站开发工作流，方便网站开发人员压缩，优化，测试代码，并使用Git一键将代码部署至虚拟主机；从而节省他们的时间，使其能将大把宝贵时间合理用于把妹等影响中华复兴的伟大事业。
+  _yoast_wpseo_meta-robots-noindex: '0'
+  _yoast_wpseo_meta-robots-nofollow: '0'
+  _yoast_wpseo_meta-robots-adv: none
+  _yoast_wpseo_sitemap-include: '-'
+  _yoast_wpseo_sitemap-prio: '-'
+  _yoast_wpseo_canonical: ''
+  _yoast_wpseo_redirect: ''
+  duoshuo_thread_id: '1175552752447957049'
+---
+<h5>Web前端开发工作流搭建</h5>
+<blockquote>
+<h2>本文组合使用Yeoman，Grunt，Git搭建了一个便捷网站开发工作流，方便网站开发人员压缩，优化，测试代码，并使用Git一键将代码部署至虚拟主机；从而节省他们的时间，使其能将大把宝贵时间合理用于<strong>把妹</strong>等影响中华复兴的伟大事业。</h2>
+</blockquote>
+<h2><strong>@summary</strong></h2>
+网站开发者的开发体验是糟糕的，因为做一个好的网站远非码写点html, javascript, css代码这么简单。为了做好一个网站，一些开发者希望有这些东西：
+<ul>
+	<li>压缩代码，降低加载时间。最常使用UglifyJS或Closure Compliler;</li>
+	<li>一个很棒的地基。html最常使用html5boilerplate; css最常使用twitter bootstrap;</li>
+	<li>自动单元测试。phantomjs提供了一种不用打开浏览器测试浏览器的方法;</li>
+	<li>一键将开发完成的代码部署到自己虚拟主机的能力。越简单、越快速、越方便，越好。</li>
+</ul>
+开发者会逐渐意识到，做好网站开发越来越需要两个层的概念：开发层和产品层，而这两个层是截然不同的，这两个层分离得越是彻底，网站投入实际生产过程中达到的性能就越棒，而部署、测试工作则变得越困难。你可以打开google的主页一探究竟，几乎所有js代码都和汇编代码一样----人，是看不懂的。
+
+而，手动满足这些需求是糟糕的开发体验的根源，这些“额外”的工作无疑会使开发者最初的目的-<em>开发一个网站</em>-的效率降低不少。
+
+幸好，直到最近，一系列工具的崛起使得自动化完成这些任务的梦想得以实现。
+
+本文搭建了一个快捷工作流来解决这些问题，当搭建完成后，仅用数条代码你即可完成：代码压缩，优化，单元测试，并使用git直接推送服务器，部署代码。
+
+完成搭建后，只需寥寥数行代码即可满足你的绝大部分需求：
+<pre><code class="prettyprint">$ grunt &amp;&amp; cd dist
+$ git commit -am 'xxxxx'
+$ git push
+</code></pre>
+毫无疑问，当花些时间完成“磨刀”的工作，“砍柴功”会被大大节省。
+<h2><strong>@Meta</strong></h2>
+<ul>
+	<li>作者: Spencer Z.</li>
+	<li>contact: <a title="weibo" href="http://weibo.com/bloodspencer">@bloodspencer</a> || <a title="email" href="sepmein@gmail.com">sepmein@gmail.com</a></li>
+	<li>许可协议: <a title="查看详细" href="http://creativecommons.org/licenses/by-nc/3.0/cn/">CC by/nc</a></li>
+</ul>
+<h2><strong>@ Catalog</strong></h2>
+在写。。。嗯。。。说不定就不写了。（遥远地传来：坑爹啊~你妹啊~etc.)
+<h2><strong>@ publision date</strong></h2>
+2013/3/26 9:49
+<h2><strong>@ versions &amp; enviroment</strong></h2>
+作者在测试本文使用代码时，使用部分软件/库的版本:
+<ul>
+	<li>nodejs: 0.10.1</li>
+	<li>yeoman: 1.0</li>
+	<li>grunt: 0.4.1</li>
+	<li>git: 1.8.2</li>
+	<li>nginx: 1.2.7</li>
+</ul>
+使用的环境:
+<ul>
+	<li>服务器: Amazon EC2 - Amazon Linux</li>
+	<li>本地: Macos Lion</li>
+</ul>
+其他linux环境的配置应该与本文相当类似，如果没有特别声明，本文中的代码均以上述环境为准，后文不再赘述。
+<h2><strong>@prerequisite</strong></h2>
+要完成本文中所提及的内容，您至少需要安装：
+
+服务器端：git, (optional: nginx/apache)
+
+本地：
+<ol>
+	<li>git, nodejs</li>
+	<li>yeoman, grunt, bower
+
+$ [sudo] npm install -g yo grunt-cli bower</li>
+</ol>
+前提中提及的软件及框架，不再赘述，欢迎google
+<h2><strong>@setup</strong></h2>
+<h3><strong>@path</strong></h3>
+首先介绍下设置工作目录
+
+本地：
+<pre><code class="prettyprint">~/sites/kokiya/
+</code></pre>
+服务器端：
+<pre><code class="prettyprint">/var/www/
+</code></pre>
+<h3><strong>@本地</strong></h3>
+配置本地客户端
+<pre><code class="prettyprint">$ mkdir ~/sites/kokiya/ &amp;&amp; cd ~/sites/kokiya/
+$ yo webapp
+$ npm install &amp;&amp; bower install
+//keep waiting till it's done
+</code></pre>
+创建并建立文件夹后，使用yeoman的cli命令<code class="prettyprint">yo</code>初始化kokiya文件夹，完成后使用<code class="prettyprint">npm</code>和<code class="prettyprint">bower</code>安装所需要的库。<code class="prettyprint">npm</code>负责nodejs库的安装，<code class="prettyprint">bower</code>负责js浏览器端库的安装（例如：jQuery）。
+
+使用ls查看本地目录，发现文件结构如下（版本不同可能稍有不同）:
+<pre><code class="prettyprint">Gruntfile.js    app     component.json  package.json    test  node_modules
+</code></pre>
+这里<code class="prettyprint">app</code>文件夹是网站核心文件所在的地方，而<code class="prettyprint">Gruntfile.js</code>和<code class="prettyprint">package.json</code>是主要设置文件，其他的先不去理会。
+
+在kokiya目录内使用<code class="prettyprint">grunt</code>命令
+<pre><code class="prettyprint">$ grunt
+</code></pre>
+<code class="prettyprint">grunt</code>会为你的webapp做一系列的事情，其中最重要的一些包括：
+<ul>
+	<li>uglify javascript文件，并将多个文件合并成数个，减少http request数量</li>
+	<li>压缩、合并、重命名css文件</li>
+	<li>使用mocha进行单元测试，测试用户定义的assetions</li>
+	<li>编译预编译文件，eg：coffeescript, sass, compass, less, etc.</li>
+	<li>压缩图片</li>
+	<li>根据上述修改index.html</li>
+</ul>
+完成后目录中多了<code class="prettyprint">dist</code>文件夹，dist=distribution，即分布、分配，该文件夹的代码已优化，是部署在服务器端的最终代码。
+
+为了后面需要，删除<code class="prettyprint">dist</code>内所有内容
+<pre><code class="prettyprint">$ rm -r dist
+</code></pre>
+<h3><strong>@服务器</strong></h3>
+服务器端搭建git库，在接收到客户端推送的<code class="prettyprint">git push</code>命令后，自动更新网站。
+
+ssh连接虚拟主机客户端后：
+<h4><strong>@nginx配置</strong></h4>
+apache用户可略过此部分。
+
+以nginx为例，设置<code class="prettyprint">nginx.conf</code>文件，将网站静态文件目录<code class="prettyprint">root</code>定位为<code class="prettyprint">/home/ec2-user/kokiya/</code>
+<pre><code class="prettyprint">$ sudo vi /etc/nginx/nginx.conf
+
+--------
+
+location / {
+    root /var/www;
+}
+
+--------
+</code></pre>
+修改完成后，重新加载nginx，使之生效：
+<pre><code class="prettyprint">$ [sudo] nginx -s reload
+</code></pre>
+由于<code class="prettyprint">git push</code>通过ssh建立客户端到服务器之间的连接，建立后使用ec2-user账户登陆系统，而此账户无root权限，git post-update hooks无权限更改<code class="prettyprint">/var/www</code>目录，故在此处修改<code class="prettyprint">/var/www</code>所有者为ec2-user，使其有权限进行操作。
+<pre><code class="prettyprint">chown -R /var/www ec2-user
+</code></pre>
+另外nginx对于root目录及其父级目录需要execution权限，使用<code class="prettyprint">ls -ll</code>命令查看文件夹权限，若文件夹权限不足则使用<code class="prettyprint">chmod +x /path</code>命令修改目录权限。否则可能导致nginx出现403 forbidden错误。这里作者没有遇到该问题，略过。
+<h4><strong>@网站文件配置</strong></h4>
+为了使<code class="prettyprint">git push</code>自动更新代码，在服务器端需要建立两个git库，首先在root目录（即 <code class="prettyprint">/var/www</code>)建立库，然后在另一目录建立.git目录，在root目录与.git目录之间建立hook。客户端推送至.git目录，在后台自动触发hook，hook将.git目录与root目录同步。
+
+First of all, 设置root目录
+<pre><code class="prettyprint">$ mkdir /var/www &amp;&amp; cd /var/www
+$ git init
+增加一个假文件，测试用，为后续push做准备
+$ vi readme.md
+$ git add .
+$ git commit -am 'First Commit'
+</code></pre>
+设置.git目录，该目录位置任意，但是注意，由于需要<code class="prettyprint">git push</code>至此目录，故应将此目录建立在ssh用户有权限写的位置。在这里，我将其建立在<code class="prettyprint">/home/ec2-user/</code>根目录下。若建立在其他位置，可以按上文方式，使用<code class="prettyprint">chown</code>修改目录所有人，或使用其他方法避开权限问题。
+<pre><code class="prettyprint">$ mkdir /home/ec2-user/kokiya_hub.git
+$ git --bare init
+</code></pre>
+使用--bare参数建立一个仅包含.git目录而不包含源文件的git库。
+
+然后，回到刚才建立的<code class="prettyprint">/var/www</code>目录，使之与刚建立的kokiya_hub库之间建立联系：
+<pre><code class="prettyprint">$ cd /var/www
+$ git remote add hub ~/kokiya_hub.git
+$ git push hub master
+</code></pre>
+一般git库的hooks存放在<code class="prettyprint">.git/hooks</code>目录，bare库则存放在<code class="prettyprint">hooks</code>文件夹，回到<code class="prettyprint">kokiya_hub.git</code>目录，发现其<code class="prettyprint">hooks</code>目录已有<code class="prettyprint">post-update.sample</code>文件，将此sample文件作为蓝本，修改其内容如下：
+<pre><code class="prettyprint">$ vi ~/kokiya_hub.git/hooks/post-update.sample
+
+#!/bin/sh
+
+echo
+echo "Live Updating Code"
+echo
+
+cd /var/www/ || exit
+unset GIT_DIR
+git pull hub master
+
+exec git-update-server-info
+</code></pre>
+保存后重命名为<code class="prettyprint">post-update</code>文件，并赋予其执行权限。
+<pre><code class="prettyprint">$ mv ~/kokiya_hub.git/hooks/post-update.sample ~/kokiya_hub.git/hooks/post-update
+$ chmod +x ~/kokiya_hub.git/hooks/post-update
+</code></pre>
+ok~服务器端基本搭建完成。回到本地，back to reality.
+<h3><strong>@回到本地</strong></h3>
+刚才我们在本地目录使用<code class="prettyprint">yeoman</code>命令初始化了一个项目，并在该项目中使用<code class="prettyprint">grunt</code>命令做了一系列的事情。在本地项目目录中：
+<pre><code class="prettyprint">app目录是源代码
+~/sites/kokiya/app
+dist目录是做好优化，准备投放至服务器端的代码
+~/sites/kokiya/dist
+</code></pre>
+在这里我们主要关心<code class="prettyprint">dist</code>目录。首先我们来到此目录，然后从远端克隆整个<code class="prettyprint">kokiya_hub.git</code>目录至本地dist目录
+<pre><code class="prettyprint">$ cd ~/sites/kokiya
+$ git clone ec2-user@server:~/kokiya_hub.git dist
+</code></pre>
+在激动人心的最终推送之前，还需要做一件重要的事，使用ssh连接至虚拟主机时需要key文件，平时连接时，有时会使用<code class="prettyprint">-i</code>参数指定该文件的位置，例如：
+<pre><code class="prettyprint">$ ssh -i /path/to/key serverAddress
+</code></pre>
+而github则无法指定key文件，导致无法通过ssh连接至服务器，导致推送失败。解决的办法是使用<code class="prettyprint">ssh-add</code>命令将该key导入系统配置路径：
+<pre><code class="prettyprint">$ ssh-add /path/to/key
+</code></pre>
+活已经干的差不多了，来测试下功能是否可用吧。
+<pre><code class="prettyprint">使用grunt命令在dist目录输出代码
+$ grunt
+$ cd dist
+$ git status
+$ git add *
+$ git commit -am 'Greetings From Kokiya'
+推送至服务器
+$ git push origin master
+</code></pre>
+会输出一段与此类似的结果：
+<pre><code class="prettyprint">Counting objects: 5, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 299 bytes, done.
+Total 3 (delta 2), reused 0 (delta 0)
+remote: 
+remote: Live Updating Code
+remote: 
+remote: From /home/ec2-user/kokiya_hub
+remote:  * branch            master     -&gt; FETCH_HEAD
+remote: Updating c4f822d..82d8144
+remote: Fast-forward
+remote:  .gitignore                      |    1 +
+remote:  404.html                        |  157 +++++++++++++++++++++++++++++++++++++++
+remote:  components/requirejs/require.js |    1 +
+remote:  favicon.ico                     |  Bin 0 -&gt; 4286 bytes
+remote:  index.html                      |   57 ++++++++++++++
+remote:  robots.txt                      |    3 +
+remote:  scripts/main.js                 |    4 +
+remote:  scripts/vendor/modernizr.js     |    1 +
+remote:  styles/main.css                 |    1 +
+remote:  9 files changed, 225 insertions(+), 0 deletions(-)
+remote:  create mode 100644 .gitignore
+remote:  create mode 100644 404.html
+remote:  create mode 100644 components/requirejs/require.js
+remote:  create mode 100644 favicon.ico
+remote:  create mode 100644 index.html
+remote:  delete mode 100644 readme.md
+remote:  create mode 100644 robots.txt
+remote:  create mode 100644 scripts/main.js
+remote:  create mode 100644 scripts/vendor/modernizr.js
+remote:  create mode 100644 styles/main.css
+To ec2-user@server:/home/ec2-user/kokiya_hub.git
+   a7511d7..82d8144  master -&gt; master
+</code></pre>
+打开浏览器，输入网站地址，发现网站<strong>已被自动更新</strong>。
+
+ok，至此，工作流搭建已经算完成了，超不容易的哎~
+<h2><strong>@workflow</strong></h2>
+最后的最后，让Spencer来总结下，搭建完此环境之后的工作流程。
+<ol>
+	<li>使用yeoman<code class="prettyprint">yo</code>生成开发框架，可选择包含最常用的htmlboilerplate或twitter bootstrap或sass等等
+<ol>
+	<li>使用<code class="prettyprint">npm install</code>安装所需nodejs包</li>
+	<li>使用<code class="prettyprint">bower install</code>安装浏览器端js库，eg: <code class="prettyprint">bower install jQuery underscore</code></li>
+</ol>
+</li>
+	<li>在<code class="prettyprint">~/sites/kokiya/app</code>文件夹中开发源代码</li>
+	<li>使用<code class="prettyprint">grunt server</code>命令测试</li>
+</ol>
+迭代2.3步，完善代码直至成熟
+<ol>
+	<li>使用<code class="prettyprint">grunt</code>生成生产环境代码</li>
+	<li>进入<code class="prettyprint">~/sites/kokiya/dist</code>文件夹，通过git，将代码直接推送至服务器</li>
+</ol>
+<h2><strong>@changelog</strong></h2>
+暂无

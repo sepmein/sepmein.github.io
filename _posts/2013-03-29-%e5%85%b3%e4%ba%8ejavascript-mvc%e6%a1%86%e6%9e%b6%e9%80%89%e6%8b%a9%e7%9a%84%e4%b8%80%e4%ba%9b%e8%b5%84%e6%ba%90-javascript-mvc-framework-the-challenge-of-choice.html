@@ -1,0 +1,93 @@
+---
+layout: post
+title: 关于Javascript MVC框架选择的一些资源 | Javascript MVC Framework - the Challenge of Choice
+tags:
+- angular
+- backbone
+- ember
+- frameworks
+- javascript
+- mvc
+- web development
+status: publish
+type: post
+published: true
+meta:
+  _yoast_wpseo_linkdex: '37'
+  _edit_last: '1'
+  _yoast_wpseo_focuskw: javascript mvc framework comparison
+  _yoast_wpseo_title: 关于Javascript MVC框架选择的一些资源 | Javascript MVC Framework - the Challenge
+    of Choice
+  _yoast_wpseo_metadesc: 如何选择Javascript MVC框架是一个难题。本文引述了一些对于Javascript MVC选择很有帮助的资源。对于如何选择合适的框架，有一定的参考价值。
+  _yoast_wpseo_meta-robots-noindex: '0'
+  _yoast_wpseo_meta-robots-nofollow: '0'
+  _yoast_wpseo_meta-robots-adv: none
+  _yoast_wpseo_sitemap-include: '-'
+  _yoast_wpseo_sitemap-prio: '-'
+  _yoast_wpseo_canonical: ''
+  _yoast_wpseo_redirect: ''
+  _thumbnail_id: '235'
+  duoshuo_thread_id: '1175552752447957050'
+---
+<h6>Javascript MVC Framework - the Challenge of Choice</h6>
+
+<blockquote>
+  <h3>“随着Web Dev项目时间变长、规模规模变大，Javascript MVC需求就越高，于是，网站开发者遇到了一个幸福的甜蜜：Javascript MVC又多又杂，并且，由于JS高度的灵活性以及与DOM结合程度不一，各种JS MVC Framework的API差异实在过大、Framework Api与项目耦合程度过高，导致项目在API之间进行迁移可能性不高；另外，每种Framework学习的成本还真不低。所以如何选择一个Framework，如何选择一个好的Framework，真是一个难题啊~~”</h3>
+</blockquote>
+
+<p>也许很多童鞋就闭着眼选择backbone了，因为最受欢迎，但是这真的是一个最好的选择么？也许是的，也许不是，最关键的是你不知道。</p>
+
+<p>被整得头晕眼花后，国外的某些<strong>Just Do 'IT'</strong>人事挣扎着做了一些评测：</p>
+
+<h3>1. <strong>评测By Gordon L. Hempton</strong></h3>
+
+<p><strong>link:</strong> <a href="http://codebrief.com/2012/01/the-top-10-javascript-mvc-frameworks-reviewed/">The Top 10 Javascript MVC Frameworks Reviewed</a></p>
+
+<p><strong>publishDate:</strong> 2012/01/13。旧了点，这东西更新换代还是挺快的。</p>
+
+<p><strong>overview:</strong></p>
+
+<p>本文试图从</p>
+
+<ul>
+<li>UI绑定（UI Binding）：是否有：Model改变时，View自动更新的功能。（spencer注：这个是核心特性，有和没有差太多。另外，有些框架支持双向绑定，view改变时，model也能改变）；</li>
+<li>组合视图（Composed View）：能否组合好几个View，使View得以复用；</li>
+<li>Web Presentation Layer：作者认为原生HTML,CSS是Web App用来定义样式和排版最好的方法，MVC应以他们为核心。（spencer注：从向下兼容的角度，我本人也认为以HTML，CSS为核心较好。因为，当js功能受损--如：加载失败，浏览器bug，etc.--那么浏览器还能理解html，css，能展示最基本的内容，而使用MVC自定义的视图则可能使内容无法展现给用户）；</li>
+<li>Plays Nicely With Others：是否能和其他框架河蟹共处，简单一句：如果用了你这货，jQuery弃我远去，那么，负分滚粗。</li>
+</ul>
+
+<p>这四个方面对mvc进行归类分析，四种特性都能满足的为最佳。</p>
+
+<p>优胜选手： <a href="http://emberjs.com">Ember.JS</a>，Ember是唯一一个四项全都满足的框架。Backbone.js不满足UI Binding &amp; Composed Views; Angular.js不满足Composed View。（个人认为，现在1.0.5版本的Angular已经满足Composed View了）</p>
+
+<p>详细的结果可以点击上文连接查看原文。</p>
+
+<h3>2. Top JavaScript MVC Framworks by Dio Synodinos</h3>
+
+<p><strong>link:</strong> <a href="http://www.infoq.com/research/top-javascript-mvc-frameworks">http://www.infoq.com/research/top-javascript-mvc-frameworks</a></p>
+
+<p><strong>publishDate:</strong> 2013/02/05</p>
+
+<p><strong>overview:</strong></p>
+
+<p>推荐所有对JS MVC选择有需要的同学都去这个站点看下。</p>
+
+<p>本文从两个维度对Framework进行评分：提供的价值和对于Web App的适应程度。使用群众的智慧，由登陆网站的人对这两个指标进行评分，评分者采取拖拽的方式，将得分拖入图标中。评分人中不乏Paul Irish等知名人士。。</p>
+
+<p>结果直接表现在图表上，相当直观，各位看官有兴趣一定要去看下，并且还在不断更新，目前Angular.JS在两个指标及投票数上都处于领先，BackBone综合排在第二。</p>
+
+<p>看结果的时候有个小tip，可以查看权威人士的评分，例如，查看Paul Irish的评分时，发现他把Backbone.js的价值评分评为最低。。看来Backbone肯定是有些方面不如他法眼了。。。</p>
+
+<p>窃以为，这个投票的结果还是非常靠谱，非常有价值的。但是如果能对“专家”的投票得分加权，也许结果更令人信服。</p>
+
+<h3>3. small tips</h3>
+
+<p>最后，也是很关键的，当选择MVC时一定要前往Github.com，至该项目页面，查看其最近一年的活跃程度。如果一个项目一年内都没什么代码提交，那还是选其他吧。。。</p>
+
+<h3>4. Summary</h3>
+
+<p>根据评测结果，以及大神意见，Spencer个人无节操地推荐 <em><a href="http://angualrjs.org">Angular.JS</a> / <a href="http://emberjs.com">Ember.JS</a> / <a href="http://backbonejs.org">Backbone.JS</a></em>(排名<strong>有</strong>先后顺序)</p>
+
+<p>结果是随着时间动态改变的，所以请注意本文的发布时间： 2013/3/29， 如果您在遥远的2年/3年/5年之后看到此文，请无情地忽略它。</p>
+
+<p>以上均是Javascript MVC框架选择时非常棒的资源，也许对于你的选择有所帮助，但是每个项目的实际情况不同，上面评测中的最佳不一定是最适合你的，选择时还应慎重起见。如果有其他好的资源，欢迎补充。</p>

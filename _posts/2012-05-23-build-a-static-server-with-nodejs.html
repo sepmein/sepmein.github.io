@@ -1,0 +1,348 @@
+---
+layout: post
+title: 如何使用NodeJs和MongoDB一步步搭建简洁微博：二、静态服务器搭建
+tags:
+- nodejs
+- server
+- static
+- website
+status: publish
+type: post
+published: true
+meta:
+  _yoast_wpseo_redirect: ''
+  _yoast_wpseo_canonical: ''
+  _yoast_wpseo_sitemap-prio: '-'
+  _yoast_wpseo_sitemap-include: '-'
+  _yoast_wpseo_meta-robots-adv: none
+  _yoast_wpseo_meta-robots-nofollow: '0'
+  _yoast_wpseo_linkdex: '60'
+  _yoast_wpseo_meta-robots-noindex: '0'
+  _yoast_wpseo_metadesc: 介绍了使用nodejs搭建最基本静态服务器的方法，从http消息，nodejs内部模块，外部模块，异步与同步等内容娓娓道来。最终使用nodejs搭建简单静态服务器，并给出相应代码。
+  _yoast_wpseo_title: ''
+  _yoast_wpseo_focuskw: node js tutorial static file server 静态服务器 nodejs
+  _edit_last: '1'
+  duoshuo_thread_id: '2114468'
+  _wp_old_slug: build-a-static-server
+  _thumbnail_id: '167'
+---
+&nbsp;
+<h5 align="right"><a href="http://spencer.kokiya.com/wp-content/uploads/2012/05/DSC09196.jpg"><img class="alignnone  wp-image-167" style="border-style: initial; border-color: initial; border-image: initial; border-width: 0px;" title="Coding Life" src="http://spencer.kokiya.com/wp-content/uploads/2012/05/DSC09196.jpg" alt="codinglife" width="992" height="660" /></a>-- By Spencer</h5>
+现在有许多提供静态服务器的框架，但是对于不了解nodejs内部机制的人（比如说我），盲目使用此类框架似乎有种放不下心的感觉。这个时候从头写一些简单的代码也许裨益良多。
+
+nodejs最初设计的一个核心功能就是http功能。要了解http模块的各种功能所代表的含义，首先要知道什么是http消息----互联网世界最常用的语言。如果已经熟悉了这部分的内容，大可以将其跳过。
+<h5><span style="font-weight: bold;">一、http消息</span></h5>
+事实上，我们所访问的页面就是由一系列http messages(request,response)包组成的。
+<ul>
+	<li>用户输入URI，客户端（通常是浏览器）根据URI生成一个request；</li>
+	<li>request发送到服务器；</li>
+	<li>服务器根据request的内容，使用一系列脚本语言（php，python，jsp，asp，nodejs。。。。etc），生成一个response；</li>
+	<li>response发送到客户端；</li>
+	<li>浏览器渲染，变成用户最后看见的样子。</li>
+</ul>
+而request和response基本格式都是由三个结构组成的：Start Line；Headers；Body。
+
+一个response如果需要返回一个html文件，需要以下基本的结构：
+<blockquote>
+<pre class="prettyprint">HTTP/1.0 200 OK          //Start Line：一系列状态代码，表示这个包的状态。
+Content-type: text/html  //Headers：内容的类型，告知客户端应该如何渲染
+Content-length: 19       //内容长度，告知客户端何时结束http连接
+                             //空白行，用来表示头部的结束
+&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;  //Body ：html文件的内容</pre>
+</blockquote>
+<!--more-->好，现在来看看nodejs主页上的那个著名的hello world例子：
+<blockquote>
+<pre class="prettyprint">var http = require('http');
+http.createServer(function (req, res) {
+ res.writeHead(200, {'Content-Type': 'text/plain'});
+ res.end('Hello World\n');
+ }).listen(1337, '127.0.0.1');
+console.log('Server running at http://127.0.0.1:1337/');</pre>
+</blockquote>
+http.createServer函数的回调（callback）的两个参数req,res，分别代表http中的request和response。
+
+稍微仔细点的同学会发现，函数中并未使用到req参数。这意味着：对于任何http request，例如："127.0.0.1:1337" , "127.0.0.1:1337/blabla" , "127.0.0.1:1337?mood=sad" ，或者随便什么，服务器都会做出同样的反应，并最终返回一样的response。
+
+在这里这个response是一个：类型为‘text/plain’，内容为“Hello World 加上一个换行符”的http消息。而最终浏览器会把这个消息以一串文字的形式显示在屏幕上。
+
+那么如何使用nodejs返回一个存在于浏览器上的文件呢？
+<h5><span style="font-weight: bold;">二、fs模块来帮忙</span></h5>
+要向客户端展示文件内容，同样要返回一个http response包。
+
+刚才两个例子里面，response包的Body返回的都是一串字符串。但是，在这里，我们需要向客户端返回一个文件的内容，这个文件可能是一个html文件，可能是一个css，或者一张图片。
+
+假设服务器上有一个index.html文件，当用户访问主页时，我们让服务器生成一个http response包，并将它返回给客户端。
+
+我们首先引用nodejs的http模块，并将其赋值给一个同名变量，方便以后使用。同样的，我们还要引入fs模块，以备后用。
+<blockquote>
+<pre class="prettyprint">var http = require('http');
+var fs = require('fs');</pre>
+</blockquote>
+好，接下来使用http包自带的createServer函数创立一个服务器，并在8080端口进行监听。
+<blockquote>
+<pre class="prettyprint">http.createServer(function(request,response){}).listen(8080);</pre>
+</blockquote>
+事实上，这段代码已经搭建好一个http服务器了，只不过这个服务器什么都不会做，有点2罢了~~~~~~~
+
+好了，接下来看看要写一个response包，需要点什么内容：
+<ol>
+	<li>start line好解决，nodes有内置的功能，搞了两百就ok</li>
+	<li>headers是一个很大的问题。
+<ol>
+	<li>首先是mime类型，这个我们已经知道了。index.html文件显然是一个html，所以content-type就是text/html。</li>
+	<li>接着是content-length，如果这玩意儿数值比你的文件值小了，那么客户端会提前关闭http连接，他就无法获取全部信息（错误结尾意味着错误文件）。如果大了，客户端就会一直等待，而不会结束本次链接。</li>
+</ol>
+</li>
+	<li>Body，这里需要的是index.html文件的内容。由于文件是以utf-8编码储存在磁盘上的，获得这些玩意儿似乎也要花点功夫。</li>
+</ol>
+不过，还好，nodejs的fs模块都有相应的功能，帮我们排忧解难。
+
+fs即"filesystem"，顾名思义，该模块设计就是用来处理文件系统的各种事务，从简单的事务：读文件、写文件、重命名、删除文件。。。。到一系列复杂的事务，nodejs的文档上对于fs模块的api有详细的介绍，想要进一步了解的移步：<a title="nodejs文件系统文档" href="http://nodejs.org/api/fs.html" target="_blank">nodejs fs doc</a>。
+<h5><span style="font-weight: bold;">三、异步</span></h5>
+好吧，我承认，在使用nodejs写点“干货”之前，“异步”这条河是一定要趟过的。
+
+下面啦介绍下nodejs不得不提一大重要特性：异步。
+
+同步、异步、asynchronous、synchronous什么的真是非常晦涩的单词。对于未曾接触过这些单词的人来说，很难从字面上对“异步”这个特性进行理解。一开始我接触这个词的时候也迷糊了好一会儿，目前总算也一知半解。现在我尝试使用人类的语言来解释下nodejs的这一特性。
+
+假设有两件事，分别叫他们：A和B。要处理完这两件事有两种做法，同时做和顺序做。在nodejs的世界里，同时做叫异步或async或asynchronous（绝大多数操作都是异步的）；而按顺序先完成A再完成B叫做同步或sync或synchronous。
+
+慢着，同时做难道不叫同步么？虽然都有个“同”字，容易造成误解，但是这两个词在nodejs世界里确实有着截然相反的意思。它们也许只是碰巧在中文里比较相似罢了。
+
+以我的观点，同时指的是时间上的同步，而同步则指的是事务上的同步。这也许能稍稍减少字面上带来的疑惑。
+
+对于偶尔下下厨房的宅男们（宅男们下厨的还真不多），也许下面的例子能更好的帮助理解同步、异步。
+
+现在，为了吃上一顿饱饭你要烧点饭，做个汤。把电饭锅按钮按下后，你不等饭烧开，直接去烧汤。这个叫做异步。
+
+现在，你又要做个炒青菜。要完成这道菜，假设有两个步骤，A:洗菜，B:炒菜。这两件事情在逻辑上前后是关联的，你无法先开始洗菜，洗到一半炒菜。所以要使用同步的方法，先洗菜，等完成这一步骤之后再炒菜。这个就是同步。
+
+抽象的例子可能不容易理解，来点代码可能会好一点，客官请看：
+<blockquote>
+<pre class="prettyprint">var fruit =  'apple';
+function magic() {
+ setTimeout(function() {
+     fruit = 'banana';
+   },10*1000);
+ }
+magic();
+console.log('The fruit becomes ' + fruit);</pre>
+</blockquote>
+首先魔术师拿出来一个苹果给大家看，没错这的确是苹果！
+
+然后他说：”看好了，10秒钟之后我把它变香蕉！“
+
+正常的javascript魔术师是这样的，先变魔术
+<blockquote>
+<pre class="prettyprint">magic();</pre>
+</blockquote>
+变啊变啊变，10秒钟之后，console输出：
+<blockquote>
+<pre class="prettyprint">The fruit becomes banana</pre>
+</blockquote>
+<strong>不过</strong>，nodejs这个魔术师似乎有点不称职。当你将这段js保存为magic.js，然后使用node运行这个文件
+<blockquote>
+<pre class="prettyprint">node magic.js</pre>
+</blockquote>
+时，发现最后console里出现的是
+<blockquote>
+<pre class="prettyprint">The fruit becomes apple</pre>
+</blockquote>
+为什么呢？
+
+因为nodejs是异步的。正因为异步这一特性，所以在这段脚本里
+<blockquote>
+<pre class="prettyprint">magic();
+
+console.log('The fruit becomes ' + fruit);</pre>
+</blockquote>
+第一行首先得到执行，不等第一句语句执行完成，nodejs开始迅速执行第二句语句。<strong>这就造成在执行第二句语句的时候，第一句还未执行完成，apple还没有变成banana。</strong>所以最后输出的依旧是apple。正因为这种执行机制，使得nodejs在特定环境下速度飞快。
+
+把魔术流程小小修改下，让magic成真：
+<blockquote>
+<pre class="prettyprint">var fruit = 'apple';
+console.log('The fruit is ' + fruit);
+
+function magic() {
+  setTimeout(function() {
+    fruit = 'banana';
+    console.log('The fruit becomes ' + fruit);
+  },10*1000);
+}
+
+magic();
+
+console.log('Magician is doing the trick');</pre>
+</blockquote>
+在nodejs里运行，输出：
+<blockquote>
+<pre class="prettyprint">The fruit is apple
+Magician is doing the trick
+The fruit becomes banana        //10秒之后</pre>
+</blockquote>
+好吧，我想对于nodejs的异步特性，我们已经了解的足够多了，让我们回到node的fs模块。
+
+fs模块是一个比较特殊的模块，因为硬盘是电脑部件中读取速度最慢的部分，所以涉及到文件的操作常常会比较慢。采用同步的操作常常要等待上一个步骤完成后才能继续。这样就容易导致进程暂定。当对服务器的请求渐渐加大的时候，服务器的性能会急剧下降，读写文件会很快变成服务器的性能瓶颈。nodejs的优势也无法发挥出来。
+
+采用异步模式时，就像刚才的例子中<span style="font-family: 'Courier New';">magic()</span>这个步骤，nodejs一旦开始执行它，就把它丢在一旁让它自己玩儿去了，马不停蹄地执行下一步，直到<span style="font-family: 'Courier New';">magic()</span>执行完成后nodejs才继续回来处理它的事务。这样能显著提升I/O性能。
+
+但是，为了适应实际情况，nodejs的fs模块在设计时，所有函数都同时包含异步和同步两个版本。同步的版本是在异步版本的函数名后 + Sync，例如： 异步读文件：<span style="font-family: 'Courier New';">fs.readFile<span style="font-family: Georgia;">()，同步版本：</span>fs.readFileSync()。</span><span style="font-family: Georgia;">一般来说，除非到万不得已，尽量不要使用同步版本。否则就失去了使用nodejs的意义。</span>
+<h5><span style="font-weight: bold;">四、来点“干货”</span></h5>
+看起来我们已经了解了足够多的背景知识。可以尝试写点代码了。
+
+首先，建立一个文件夹，里面新建一个<span style="font-family: 'Courier New';">server.js</span>文件，建立一个<span style="font-family: 'Courier New';">public</span>文件夹，里面要放的是静态的网站。在public文件夹里新建一个<span style="font-family: 'Courier New';">index.html</span>，作为主页；再随便建一个<span style="font-family: 'Courier New';">favicon.ico</span>。你可以写任何你想要的内容。
+
+打开<span style="font-family: 'Courier New';">server.js</span>。首先来分析一下，要实现静态服务器功能，需要哪些nodejs功能。
+
+要建立http服务器，引入http模块是必须的；要读写文件，fs模块也需要；要处理和分解不同http request传入的url，还要引入url模块；另外，我们需要知道读取文件的mime类型，以便将其写到response包头里，这个目前还没有办法解决，我们先把这个问题放一下。
+
+在引入模块后，我们首先启动一个还没有任何功能的http服务器。目前为止，代码如下：
+<blockquote>
+<pre class="prettyprint">var http = require('http');
+var fs = require('fs');
+var url = require('url');
+
+var app = http.createServer(handler);
+app.listen(4000);
+
+function handler(req, res) {
+
+}</pre>
+</blockquote>
+为保持代码可读性，这里将作为<span style="font-family: 'Courier New';">createServer</span>参数的匿名函数”提取“出来，并赋予它名字：<span style="font-family: 'Courier New';">handler</span>。<span style="font-family: 'Courier New';">handler</span>同样拥有两个参数<span style="font-family: 'Courier New';">req,res</span>，分别代表http请求和回复。
+
+现在假设有个http请求：
+<blockquote>
+<pre class="prettyprint">http://localhost:4000/css/style.css</pre>
+</blockquote>
+我们要对这个url做一点处理，让它变成本地文件夹的地址，这样才能读取文件，引入这样两行代码能很好完成这个功能：
+<blockquote>
+<pre class="prettyprint">var STATICPATH = __dirname + '/public';
+var pathname = STATICPATH + url.parse(req.url).pathname;</pre>
+</blockquote>
+同样地，为了方便，这里创建了一个常量 <span style="font-family: 'Courier New';">STATICPATH</span>，用以定义作为静态服务器的文件地址<span style="font-family: 'Courier New';">。__dirname</span> 是<span style="font-family: 'Courier New';">nodejs</span>里的保留变量，代表当前运行的本地文件夹地址。
+
+<span style="font-family: 'Courier New';">url.parse(req.url).pathname</span>中的<span style="font-family: 'Courier New';">pathname</span>代表了<span style="font-family: 'Courier New';">url</span>部分中斜杠以后的<span style="font-family: 'Courier New';">path</span>部分（不代表<span style="font-family: 'Courier New';">query</span>和<span style="font-family: 'Courier New';">hash</span>）。
+
+你可以添加语句来检查<span style="font-family: 'Courier New';">pathname</span>是否获取正确，到目前为止我们的<span style="font-family: 'Courier New';">handler</span>是这样的：
+<blockquote>
+<pre class="prettyprint">function handler(req, res) {
+  var STATICPATH = __dirname + '/public';
+  var pathname = STATICPATH + url.parse(req.url).pathname;
+
+  console.log(pathname);
+}</pre>
+</blockquote>
+对于上面的那个<span style="font-family: 'Courier New';">url</span>地址，<span style="font-family: 'Courier New';">handler</span>会输出：
+<blockquote>
+<pre class="prettyprint">__dirname/public/css/style.css</pre>
+</blockquote>
+恩，看上去是一个不错的开始。虽然目前服务器还不会做出什么相应。
+
+要针对不同文件做出响应，<span style="font-family: 'Courier New';">http response</span>包需要知道三个变量
+
+文件的mime类型以及文件的长度需要写在response包的head line中；而文件内容怎输出到response包的body中。
+
+首先来看看mime类型，mime类型能告诉客户端如何解析返回的文件。例如，css文件的mime类型为‘text/css’, js文件的mime类型为‘text/javascript’。不同类型对应一种mime，为了覆盖一般情况，自己编写mime类型列表似乎有点吃力不讨好。
+
+索性，nodejs已有很多能解决此问题模块，同名模块mime被使用的最广泛。首先，安装mime模块，运行：
+<blockquote>
+<pre class="prettyprint">npm install mime</pre>
+</blockquote>
+随后，引用并使用该模块，在头部和handler部分分别加入以下语句：
+<blockquote>
+<pre class="prettyprint">var mime = require('mime');</pre>
+<pre class="prettyprint">var getMime = mime.lookup(pathname);</pre>
+</blockquote>
+ok，搞定，现在getMime就是我们所需要的mime类型了。
+
+然后是文件大小，fs的stat函数提供了相应的功能。stat()函数接受两个参数，第一个参数是传入的路径，第二个参数是一个回调函数，回调函数中传入两个参数，第一个是err，第二个是fs.stat对象，既查询结果。
+<blockquote>
+<pre class="prettyprint">//传入已获得的pathname
+fs.stat(pathname,function(err,stat){
+  if(err){
+    console.log(err);
+    res.writeHead(404);
+    res.end('No Such File error');
+    return;
+  }
+
+  res.writeHead(200,{
+    "content-type" : getMime,
+    "content-length" : stat.size
+  });
+})</pre>
+</blockquote>
+在上面一段代码中，我们首先使用fs模块的stat方法，对上文中获得的pathname进行处理，获得文件的stat，将该文件的大小stat.size赋值给response包的content-length字段。
+
+至此，response包的包头已经完成。
+
+最后，还缺文件的内容。fs模块也提供了读文件的功能，该函数为fs.readFile，改函数的格式与fs.stat函数类似，同样是传入两个参数，第一个参数是传入的路径，第二个参数是一个回调函数，回调函数中传入两个参数，第一个是err，唯一的区别是第二个是对象，这里的第二各对象是data，既所读取的文件数据。
+<blockquote>
+<pre class="prettyprint">fs.readFile(pathname,function(err,data){
+  if(err){
+    throw err;
+  }
+  res.end(data);
+}</pre>
+</blockquote>
+res.end函数将所读取的文件内容写入http response包的body中，一个完整的http消息构建完成，这个消息被发送到提交请求的客户端，客户现在应该能享受你所提供的文件内容了。
+
+<strong>五、quick review</strong>
+
+首先建立项目文件夹，在文件夹中建立server.js，public文件夹（用于放置静态服务器文件）,在public文件夹下建立index.html，favicon.ico等文件。
+
+在项目文件夹中运行
+<blockquote>
+<pre class="prettyprint">npm install mime</pre>
+</blockquote>
+server.js 中写入完整代码
+<blockquote>
+<pre class="prettyprint">var http = require('http');
+var fs = require('fs');
+var url = require('url');
+var mime = require('mime');
+var STATICPATH = __dirname + '/public';
+
+var app = http.createServer(handler);
+app.listen(4000);
+
+function handler(req, res) {
+  var pathname = STATICPATH + url.parse(req.url).pathname;
+  var getMime = mime.lookup(pathname);
+
+  if (pathname === STATICPATH + '/') {
+    pathname = STATICPATH + '/index.html';
+  }
+
+  fs.stat(pathname, function(err, stat) {
+    if (err) {
+      console.log(err);
+      res.writeHead(404);
+      res.end('No Such File error');
+      return;
+    }
+
+    res.writeHead(200, {
+      "content-type": getMime,
+      "content-length": stat.size
+    });
+  });
+
+  fs.readFile(pathname, function(err, data) {
+    if (err) {
+      throw err;
+    }
+    res.end(data);
+  });
+}</pre>
+</blockquote>
+是的！就这么简单，你已了解nodejs的基本特性，使用了内置的http，fs，url模块中的部分功能，使用npm安装了一个外部模块（mime），打造出了一个最简单的静态服务器。超酷吧！
+
+这个静态服务器可以有许许多的改进，好吧，几乎所有地方都可以改进；但是，不可否认的是，写这个服务器的同时学到不少nodejs知识，这些知识对于将来进一步深入nodejs颇有裨益，另外，这个静态服务器的性能倒也相当不错。
+
+最后，在public文件夹添加任何你想要的网站内容，然后在命令行运行
+<blockquote>
+<pre class="prettyprint">node server.js</pre>
+</blockquote>
+现在在浏览器输入localhost:4000，享受吧~

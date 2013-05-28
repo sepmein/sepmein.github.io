@@ -1,0 +1,82 @@
+---
+layout: post
+title: 网站速度优化2.0X by gzip
+tags:
+- 未分类
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+  _yoast_wpseo_focuskw: gzip
+  _yoast_wpseo_title: web site speed up by gzip
+  _yoast_wpseo_metadesc: kokiya.com整站开启Gzip，速度提升一倍，压缩率超过50%，.htaccess代码使用html5boilerplate精心调教代码。服务器如果以后如果支持，可以尝尝deflate口味的。
+  _yoast_wpseo_meta-robots-noindex: '0'
+  _yoast_wpseo_meta-robots-nofollow: '0'
+  _yoast_wpseo_meta-robots-adv: none
+  _yoast_wpseo_sitemap-include: '-'
+  _yoast_wpseo_sitemap-prio: '-'
+  _yoast_wpseo_canonical: ''
+  _yoast_wpseo_redirect: ''
+  duoshuo_thread_id: '332956'
+  _yoast_wpseo_linkdex: '76'
+---
+今天和服务器提供厂商交涉后，开启了gzip功能。
+
+增速超显著，原来以我家的网速&amp;延迟载入平均需要2.5s，现在1s不到。gzip一般情况下能够压缩50%以上的代码，恩，网站速度现在看下来基本还是和此数据一致。
+
+在apache下开启gzip的话，网上有许多教程。基本步骤就是首先安装gzip模块，然后在apache配置文件中，取消该模块前面的“#”号，然后在服务器html目录下放置.htaccess文件。在文件下放置一些代码。
+
+下面的代码摘自非常棒的html5boilerplate：
+
+<pre class="prettyprint" style="font-size:0.5em;">
+# --------------------------------------------------------------
+# Gzip compression
+# --------------------------------------------------------------
+
+<IfModule mod_deflate.c>
+
+  # Force deflate for mangled headers developer.yahoo.com/blogs/ydn/posts/2010/12/pushing-beyond-gzipping/
+  <IfModule mod_setenvif.c>
+    <IfModule mod_headers.c>
+      SetEnvIfNoCase ^(Accept-EncodXng|X-cept-Encoding|X{15}|~{15}|-{15})$ ^((gzip|deflate)\s*,?\s*)+|[X~-]{4,13}$ HAVE_Accept-Encoding
+      RequestHeader append Accept-Encoding "gzip,deflate" env=HAVE_Accept-Encoding
+    </IfModule>
+  </IfModule>
+
+  # HTML, TXT, CSS, JavaScript, JSON, XML, HTC:
+  <IfModule filter_module>
+    FilterDeclare   COMPRESS
+    FilterProvider  COMPRESS  DEFLATE resp=Content-Type $text/html
+    FilterProvider  COMPRESS  DEFLATE resp=Content-Type $text/css
+    FilterProvider  COMPRESS  DEFLATE resp=Content-Type $text/plain
+    FilterProvider  COMPRESS  DEFLATE resp=Content-Type $text/xml
+    FilterProvider  COMPRESS  DEFLATE resp=Content-Type $text/x-component
+    FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/javascript
+    FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/json
+    FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/xml
+    FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/xhtml+xml
+    FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/rss+xml
+    FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/atom+xml
+    FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/vnd.ms-fontobject
+    FilterProvider  COMPRESS  DEFLATE resp=Content-Type $image/svg+xml
+    FilterProvider  COMPRESS  DEFLATE resp=Content-Type $image/x-icon
+    FilterProvider  COMPRESS  DEFLATE resp=Content-Type $application/x-font-ttf
+    FilterProvider  COMPRESS  DEFLATE resp=Content-Type $font/opentype
+    FilterChain     COMPRESS
+    FilterProtocol  COMPRESS  DEFLATE change=yes;byteranges=no
+  </IfModule>
+
+  <IfModule !mod_filter.c>
+    # Legacy versions of Apache
+    AddOutputFilterByType DEFLATE text/html text/plain text/css application/json
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE text/xml application/xml text/x-component
+    AddOutputFilterByType DEFLATE application/xhtml+xml application/rss+xml application/atom+xml
+    AddOutputFilterByType DEFLATE image/x-icon image/svg+xml application/vnd.ms-fontobject application/x-font-ttf font/opentype
+  </IfModule>
+
+</IfModule>
+</pre>
+
+<p>服务器如果以后如果支持，可以尝尝deflate口味的，据说更好。</p>

@@ -1,0 +1,95 @@
+---
+layout: post
+title: 如何使用NodeJs和MongoDb一步步搭建简洁微博：一、背景介绍以及环境搭建
+tags:
+- chatroom
+- nodejs
+- website
+- websocket
+status: publish
+type: post
+published: true
+meta:
+  _yoast_wpseo_linkdex: '38'
+  _edit_last: '1'
+  _yoast_wpseo_focuskw: nodejs,websocket,chatroom,website,socket.io
+  _yoast_wpseo_title: 如何使用NodeJs和Websocket一步一步搭建简洁聊天室：一、背景介绍以及环境搭建
+  _yoast_wpseo_metadesc: 如何使用Node.JS搭建一个Websock的简洁聊天室？本系列文章意在通过简明的阐述向大家介绍完成该项目的每个步骤。本文是该系列的第一篇，主要介绍背景知识以及环境搭建。
+  _yoast_wpseo_meta-robots-noindex: '0'
+  _yoast_wpseo_meta-robots-nofollow: '0'
+  _yoast_wpseo_meta-robots-adv: none
+  _yoast_wpseo_sitemap-include: '-'
+  _yoast_wpseo_sitemap-prio: '-'
+  _yoast_wpseo_canonical: ''
+  _yoast_wpseo_redirect: ''
+  duoshuo_thread_id: '332960'
+---
+大家好，我是Spencer，废话不多，快速进入主题。
+<h2>首先是：</h2>
+<ul>
+	<li>成品：<a title="kokiya.no.de" href="http://kokiya.no.de" target="_blank">kokiya.no.de</a>；</li>
+	<li>源码：<a title="github.com/sepmein/KOKIYA--CHAT" href="http://github.com/sepmein/KOKIYA--CHAT" target="_blank">github.com/sepmein/KOKIYA--CHAT</a>；(Feel Free To。。。之类的省略20字)</li>
+</ul>
+<h2>接下来，是：声明</h2>
+<ol>
+	<li>本文算不上一个教程，顶多算一个心路历程。</li>
+	<li>代码首先注重功能，结构啦，MVC啦什么的都很丑陋。喜欢讨论诸如此类的，可以移步google等。</li>
+	<li>本人水平不济。欢迎拍砖，请勿拍死。</li>
+	<li>代码遵循Apache，Mit，Gpl。。。。哦，算了吧，我不懂这些玩意儿，你们随便玩吧。</li>
+</ol>
+<h2>然后是：所使用到的技术，链接，及一句话介绍</h2>
+<ol>
+	<li>服务器端</li>
+<ol>
+	<li><a title="Node.JS" href="http://nodejs.org" target="_blank">Node.JS</a> 服务器端Javascript，google V8引擎，事件驱动，单线程，无阻塞。</li>
+	<li><a title="NPM" href="http://npmjs.org" target="_blank">NPM</a> Node.JS的包管理系统。</li>
+	<li><a title="mime" href="http://search.npmjs.org/#/mime" target="_blank">Mime</a> （非必须）如果你想自己搞个静态服务器，又不想自己写{ ".js" : "application/javascript'' , "html" : "text/html" }之类的东西，用上它或者其他类似的东西。</li>
+</ol>
+	<li>客户端（非必须）</li>
+<ol>
+	<li><a title="jQuery" href="http://jquery.com" target="_blank">jQuery</a> 这玩意儿真的需要介绍么？脏活累活全靠它（有多脏？看：document.getElementById('foo')可以用$('#foo')代替），不得不承认，现在许多前端是只会jQuery不会javascript的。</li>
+	<li><a title="Bootstrap Twitter" href="http://twitter.github.com/bootstrap/" target="_blank">Twitter BootStrap</a> 推特的CSS模板。让你的生活稍微美好一点。</li>
+</ol>
+	<li>版本控制（非必须）</li>
+<ol>
+	<li><a title="git" href="http://git-scm.com/" target="_blank">GIT</a> 以及 <a title="github" href="http://github.com" target="_blank">github.com</a> 傻瓜内容跟踪器，分布式。Linux之父搞出来的东西。</li>
+</ol>
+</ol>
+<!--more-->
+<h2 style="text-align: center;">开始的开始，搭建NodeJS开发环境</h2>
+首先，必不可少的，你必须安装环境。在这里，这句话的意思就是指安装Node.JS和NPM，然后通过NPM安装Socket.IO以及Mime。
+
+<strong>第一步、安装Node.JS。</strong>
+<ol>
+	<li>Windows和Mac用户可以偷乐一下，因为在上面的Node.JS官网链接里你可以很方便找到下载链接。然后双击安装。搞定。</li>
+	<li>很不幸我不仅即是Windows用户以及Mac用户，我还是Linux用户。对于linux用户，安装方法比较多。在这边我只提一种，肯定不算最方便，但是能用到最新的Node版本。</li>
+<ol>
+	<li>上官网，下源码（source code）</li>
+	<li>解压缩，使用cd命令进入该文件夹</li>
+	<li>./configure</li>
+	<li>make</li>
+	<li>sudo make install</li>
+</ol>
+</ol>
+<p style="padding-left: 60px;"><span style="color: #999999;">值得一提的是，编译之前需要有python以及libssl-dev。如果你像我一样是个Linux盲，而且机器是新装的，没什么东西，可以向我学习：先make，然后等出错了，把出错的代码google下。事实证明这样还是蛮方便的，我make过程中出错两次，google都很精准的帮我找到缺失的包；在运行了两条命令之后，Ubuntu终于成功安装了Node。</span></p>
+<p style="padding-left: 60px;"><span style="color: #999999;">不得不再次吐槽的是，linux居然有如此多的包管理系统，真乱。</span></p>
+<p style="padding-left: 30px;">安装完毕后，命令行输入： node --version 。如果有版本出来，那么你装好了。</p>
+<strong>第二步、“轮到”NPM了。</strong>
+<ol>
+	<li>好吧，Windows和Mac用户又可以无耻地笑了，因为刚才安装Node的时候居然NPM已经偷偷内置了。哎~</li>
+	<li>Linux用户再次拖着个鞋拔子脸登场。还是一种方法。（其他方法在NPM官网有详细介绍，你当然也能google）</li>
+</ol>
+<pre style="padding-left: 30px;">curl http://npmjs.org/install.sh | sh</pre>
+<p style="padding-left: 30px;">不管你有没有成功，反正我是没成功<del>（废话，你连curl都没装，你怎么成功）</del>。</p>
+<p style="padding-left: 30px;">好吧，你肯定成功了。命令行输入： npm --version 。同样应该有个版本号。</p>
+<strong>第三步、安装Mime</strong>
+<p style="padding-left: 30px;">轮到大家一起偷笑了。</p>
+<p style="padding-left: 30px;">建立一个将来放置这个项目的文件夹，cd进那个文件夹。运行：</p>
+
+<pre style="padding-left: 30px;">npm install</pre>
+<p style="padding-left: 30px;">或者你暂时不想建这个文件夹，你可以在命令最后加上 “ -g ” 。它应该代表global的意思。这样你的其他项目也能访问到这两个包。</p>
+<strong>其他、到上面的官网链接，然后把代码下下来就ok了。git安装先不涉及了。</strong>
+
+<!--more-->
+
+OK，恭喜你，我想你已经搭好了该项目所需要的所有环境了。

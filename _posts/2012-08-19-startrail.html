@@ -1,0 +1,97 @@
+---
+layout: post
+title: starTrail is done, waits for more
+tags:
+- javascript
+- raphaeljs
+- star trails
+status: publish
+type: post
+published: true
+meta:
+  _yoast_wpseo_linkdex: '0'
+  _edit_last: '1'
+  _yoast_wpseo_focuskw: ''
+  _yoast_wpseo_title: ''
+  _yoast_wpseo_metadesc: ''
+  _yoast_wpseo_meta-robots-noindex: '0'
+  _yoast_wpseo_meta-robots-nofollow: '0'
+  _yoast_wpseo_meta-robots-adv: none
+  _yoast_wpseo_sitemap-include: '-'
+  _yoast_wpseo_sitemap-prio: '-'
+  _yoast_wpseo_canonical: ''
+  _yoast_wpseo_redirect: ''
+  duoshuo_thread_id: '6596664'
+  _wp_old_slug: startrail-is-done-waits-for-more
+---
+如果我有幸被您关注，那您也许看过我的前一篇博客：<a href="http://spencer.kokiya.com/bigbang" title="先去看看？">bigbang编程的美丽意外</a>，此文主要介绍了Spencer想要在浏览器中模拟星星长曝光轨迹，最后败了，弄得一塌糊涂的情况（不过一塌糊涂得还蛮好看的，我叫它bigBang bug）
+
+
+
+当然，时间有一阵了，Spencer弄了半天总算也弄完了这个小东西，中间因为点小事耽搁了发布的进程（卧槽！生个娃是‘点小事’！？！you b@st@rd）
+
+
+
+额。。。不管啦~反正Spencer完成了在浏览器中模拟星空轨迹长曝光，使用了Raphaeljs作为库。
+
+
+
+Spencer已经把这个<strong>玩意儿</strong>的源代码发布到我的github页面，是的！如果您感兴趣，大可以前往下载<a href="https://github.com/sepmein/starTrail" title="前往github">https://github.com/sepmein/starTrail</a>
+
+
+
+然后？然后双击index.html，星空轨迹慢慢划过夜空的情况就会在您的浏览器中慢慢呈现了！
+
+
+
+如果您还有兴趣进一步，可以打开文件夹中的 <code>srcipts.js</code> ，在它的上方应该会看到下面一串乱码（其实是设置参数）：
+
+
+
+<pre><code>    var preference = {
+    P: [640, 400],      //中心位置
+    ALPHA: 0,           //星轨的初始角度
+    MAXRANGE: 1000,     //最远的星轨到中心的距离，越大分布越稀疏
+    NUMOFTRAILS: 100,   //星轨条数，数目增大严重影响性能，3000左右能模拟真实自然界场景
+    MAGNITUDE: {
+        NUM: [10, 23, 67, 229, 738, 2420],   //模拟自然界中星等，分别为一等星、二等星。。。的数量
+        LIGHT: [1, 1 / 1.35, 1 / 1.35 / 1.35, 1 / 1.35 / 1.35 / 1.35, 1 / 1.35 / 1.35 / 1.35 / 1.35, 1 / 1.35 / 1.35 / 1.35 / 1.35 / 1.35, 1 / 1.35 / 1.35 / 1.35 / 1.35 / 1.35 / 1.35]           //各星等间亮度差异
+    },
+    speed: 120000,      //星轨运行速度，完成一圈所需要的ms
+    step: 360           //步进，星轨完成动画总共运行的角度
+};
+</code></pre>
+
+您可以修改上面一串乱码的参数，以改变星空的表现形式。
+
+
+
+例如，如果对浏览器的性能有信心，试试增大NUMOFTRAILS这个参数到1000，星轨条数越多越能模拟自然界中的真实情况，当然，对性能消耗就越大。
+
+
+
+这边小小的炫耀一记，为了模拟自然界中不同星星不同亮度的情况，Spencer特地查了资料，发现“<strong>星等</strong>”这个参数是对自然界中星星亮度进行分级的标准。所以starTrail使用了真实的星等数据，只要增加星星数量，就能更好的模拟，获得接近真实的效果（在地球的每个半球所能见到的星空情景）。
+
+
+
+当然，如果真心牛逼，以后也许可以试试将每颗星星不同的数据导入，这样就更拟真了，也不需要任何随机算法了。
+
+
+
+<hr />
+
+碰到的问题（嗯，到这里，非技术宅可以狠狠地关闭这个该死的网页了，是的）：
+
+
+
+我确实一度想要把starTrail的效果做到网站的首页里，不过：starTrail使用的svg技术渲染效率不算高，所以提高星轨数量的时候，性能受到非常严重的影响。在webkit核心的浏览器中测试的情况就不理想，firefox等以Gecko为核心的浏览器可能还要差一点，ie什么的应该更差了。虽然RaphaelJS的svg确实支持范围很广泛(居然支持ie6!,对了，ie是什么？)，但是如果要在生产环境中使用starTrace，请慎重。
+
+
+
+有同学这时候会想到html5 canvas，有兴趣的同学可以用canvas做一个类似的star trails，不过据我所知，渲染对象越多，canvas的性能是不及svg的。
+
+
+
+嗯，目前就这样，有什么想法的童鞋可以联系Spencer。
+
+

@@ -1,0 +1,307 @@
+---
+layout: post
+title: 关于Javascript文档生成器 JSDoc , YUIDoc , Dox , JSDuck
+tags:
+- javascript
+- 文档
+- 注释
+status: publish
+type: post
+published: true
+meta:
+  _yoast_wpseo_linkdex: '63'
+  _edit_last: '1'
+  duoshuo_thread_id: '4651202'
+  _yoast_wpseo_focuskw: javascript documentation generator javascript 文档 生成器
+  _yoast_wpseo_title: 关于Javascript文档生成器 - javascript documentation tools summary
+  _yoast_wpseo_metadesc: 文章简要介绍并分析了几种常用的Javascript文档生成器--------在书写Javascript代码时，我们常常被自己精妙的思考逻辑所折服，这是最有成就感的时候。但是，成就感逐渐转变成不安与惶恐，因为。。。你发现自己渐渐看不懂自己写的东西了。这个时候，你也许需要写点文档了。
+  _yoast_wpseo_meta-robots-noindex: '0'
+  _yoast_wpseo_meta-robots-nofollow: '0'
+  _yoast_wpseo_meta-robots-adv: none
+  _yoast_wpseo_sitemap-include: '-'
+  _yoast_wpseo_sitemap-prio: '-'
+  _yoast_wpseo_canonical: ''
+  _yoast_wpseo_redirect: ''
+---
+<h2>Javascript Documentation Tools - JSDoc, YUIDoc, Dox, JSDuck</h2>
+
+<strong>最近更新日期：8.22</strong>
+
+
+
+在书写Javascript代码时，我们常常被自己精妙的思考逻辑所折服，这是最有成就感的时候。但是，正所谓阴阳调和，万物归宗，负负得正，这所谓的成就感随着时间的推移，渐渐变淡，直到记不起自己的思维过程的那一天开始，成就感逐渐转变成不安与惶恐，因为。。。你发现自己看不懂自己写的东西了。
+
+
+
+这个时候，人们突然会想起她的好来。她有好多名字，<strong>文档</strong>、<strong>注释</strong>。。。不过你懂：她。。是的，只有她，只是她。
+
+
+
+终于开始决定要写文档的时候，你略一沉吟，觉得她不能是随随便便的样子的，你对他还是有所需求的，这些最基本的需求包括：
+
+
+
+<ul>
+<li>规范化的书写语法，总不能写写就忘了自己以前是怎么写的了嘛。。</li>
+<li>最好能生成文档，变成网页什么的就更好了</li>
+</ul>
+
+Javascript文档生成器真是不够发达，这可能是因为前端语言代码行数毕竟较少，很多代码也不需要（甚至不想让）其他人能看懂（看看google的汇编版Javascript吧！！）。但是，由于NodeJS的出现，服务器端Javascript显然要比前端的要稍微模块化点，一些API的调用也需要让自己包括开发者能看懂一二，所以，书写注释、生成文档的需求应该是稍微多了那么一点点的。
+
+
+
+目前,几种Javascript文档生成器使用的标签语法与JavaDoc,PHPDoc等较为成熟语言的生成器类似,降低了人们迁移的成本.
+
+
+
+下面简单介绍几种在Javascript界常用的文档生成器:
+
+
+
+<h2><strong>JSDoc</strong></h2>
+
+<ul>
+<li>提供者：micmath@gmail.com</li>
+<li>地址：<a href="https://github.com/jsdoc3/jsdoc" title="前往github">前往</a></li>
+<li>版本：3</li>
+<li>官方介绍：</li>
+</ul>
+
+<blockquote>
+  JSDoc 3 is an API documentation generator for JavaScript, similar to JavaDoc or PHPDoc. You add documentation comments directly to your source code, right along side the code itself. The JSDoc Tool will scan your source code, and generate a complete HTML documentation website for you.
+
+
+  
+  翻译：类似于JavaDoc以及PHPDoc，JSDoc3是一个为Javascript设计的API文档生成器。你只需在你的源代码旁添加文档注释，JSDoc工具就会遍历你的源代码，最终为你的文档生成一个完整的HTML站点。
+
+
+</blockquote>
+
+<ul>
+<li>输出格式：Html</li>
+<li>需要的环境: Mozilla Rhina engine &amp; Java(已内置在安装包)</li>
+<li>近期活跃度：<a href="https://github.com/jsdoc3/jsdoc/graphs/commit-activity" title="github代码提交频率">查看</a></li>
+</ul>
+
+JSDoc库已经发展到第三版，并且在最近依旧保持了不错的活跃程度。支持众多tags，tags的格式被使用程度是不是最广泛的不清楚，但一定是最广泛的之一，一些其他的库可以说是JSDoc语法的修订版或者扩展板。编译需要Mozilla Rhino engine支持，索性已内置。
+
+
+
+生成Html的方式有利有弊，一方面一劳永逸，一方面缺乏点变数。
+
+
+
+补充：Spencer童鞋发现一个不错的站点，输入github用户名及项目名，若已在项目内使用JSDoc注释，变能查看该项目的文档。自己的项目没有弄过注释的话，看看别人的也行啊~~ <a href="http://http://jsdoc.info" title="jsdoc.info">猛击前往</a>
+
+
+
+8.2更新: jsdoc可以自定义模板.
+
+
+
+<strong>8.22更新</strong>jsdoc是JavaDoc的一个翻版，jsdoc的标记方式也许很适合Java这种oop痕迹很重的语言，但是否适合Js，还有待验证。另外，目前jsdoc3.0的文档似乎还很不完善，只能找到2.x版本的。
+
+
+
+<hr />
+
+<h2><strong>YUIDoc</strong></h2>
+
+<ul>
+<li>提供者：yahoo YUI</li>
+<li>地址：<a href="http://yui.github.com/yuidoc/" title="前往站点">前往</a></li>
+<li>版本：0.3.17</li>
+<li>官方介绍： > YUIDoc is a Node.js application that generates API documentation from comments in source, using a syntax similar to tools like Javadoc and Doxygen.</li>
+</ul>
+
+<blockquote>
+  翻译&amp;注释:大致意思与JSDoc相近,唯一的重大区别是YUIDoc是使用NodeJS作为后端的,所以要安装她,自然要先安装NodeJS.
+
+
+</blockquote>
+
+<ul>
+<li>输出格式：Html</li>
+<li>需要环境: NodeJS</li>
+<li>近期活跃度：<a href="https://github.com/yui/yuidoc/graphs/commit-activity" title="github代码提交频率">查看</a></li>
+</ul>
+
+YUIDoc自己号称的三个特点:
+
+
+
+<ul>
+<li>实时预览.YUIDoc能在后台监视代码中注释的变化,每次访问本地地址的时候,能实时显示文档变化.当然这个功能只在本地能有效使用.后台的话,文档改动频率没有高到实时的程度,所以这个诉求应该不高. </li>
+<li>生成的文档使用现代化的语法标记.使用真实的URL.并能够使得网络爬虫和那些不能理解Javascript的其他代理,理解你的页面.这个特性应该是个招牌,有待使用中鉴定. </li>
+<li>多语言支持,其实注释的格式一样都能生成文档的吧. </li>
+</ul>
+
+YUIDoc使用生成的Html页面使用Handlerbars.js作为页面生成模板，所以自定义页面变得<strong>稍微</strong>容易一点。但是先决条件是:你得先理解Handlerbars.js是什么东西,然后弄清YUIDoc生成的Html的模板结构.
+
+
+
+YUIDoc命令行工具选项较多,功能较为丰富的同时,需要话费的阅读时间也较长.命令行的配置需要自己在项目文件夹建立yuidoc.json文件.
+
+
+
+总体来说,给人的感觉是学习成本比较高,索性,文档的支持还是不错的.(--b也是啊..本来就是做文档的,然后自己的文档搞得不灵,不是要被别人吐槽到爆么!!)
+
+
+
+<strong>8.22更新</strong>yuidoc支持markdown
+
+
+
+<hr />
+
+<h2><strong>Dox</strong></h2>
+
+<ul>
+<li>提供者：vision media</li>
+<li>地址：<a href="https://github.com/visionmedia/dox" title="前往github">前往</a></li>
+<li>版本：0.3.1</li>
+<li>官方介绍： > Dox is a JavaScript documentation generator written with node. Dox no longer generates an opinionated structure or style for your docs, it simply gives you a JSON representation, allowing you to use markdown and JSDoc-style tags.</li>
+</ul>
+
+<blockquote>
+  翻译：Dox是一个由node编写的Javascript文档生成器.Dox不再为你的文档生成预定义的结构或者样式,她仅仅向你返回一个JSON,允许你能使用MarkDown格式或者JSDoc样式的语法标签.
+
+
+</blockquote>
+
+<ul>
+<li>输出格式：JSON</li>
+<li>需要环境: NodeJS</li>
+<li>近期活跃度：<a href="https://github.com/visionmedia/dox/graphs/commit-activity" title="github代码提交频率">查看</a></li>
+</ul>
+
+输出JSON以及在注释中能够使用MarkDown应该算Dox的两大特性.
+
+
+
+输出JSON而并不是一整个网页的优点就是你能自己为自己的文档设计一个站点.其实有很多时候你并不是讨厌预定义的一整个站点,但是,一旦你对预定义格式的一小部分不满意,要做一点点修改的时候,发现居然还要从头从零学起,这个应该是最让人头痛的地方.
+
+
+
+要生成Html自然而然想到要用MarkDown.而对于这种格式....从纯书写的角度,实在是想不出不用它来代替Html的理由.
+
+
+
+Dox的命令行工具选项较少,可用的目前只有三个.总体来说,Dox是一种简洁的Javascript文档生成解决方案.唯一的缺点就是,你要自己弄点Html,css写个站点了.
+
+
+
+8.1更新。在笔者试用dox后，发现dox只支持stdio输入输出,这个......不能整个目录输出很蛋疼啊...看管们有什么使用经验,求在评论框涂两笔.
+
+
+
+<strong>8.22更新。</strong>Spencer发现一段能够批量输出的脚本，应该是只支持*inx系统。未经测试，欢迎试用~
+
+
+
+<pre><code>JS_FILES := $(shell find lib/ -type f -name \*.js | grep -v 3rdparty)
+
+#Add node_modules/*/bin/ to path:
+#Ugly 'subst' hack: Check the Make Manual section 8.1 - Function Call Syntax
+NPM_BINS:=$(subst bin node,bin:node,$(shell find node_modules/ -name bin -type d))
+ifneq ($(NPM_BINS),) 
+    PATH:=${NPM_BINS}:${PATH}
+endif
+
+.PHONY: doc lint test
+
+doc: doc/index.html
+
+doc/index.html: $(JS_FILES)
+    @mkdir -p doc
+    dox --title "Project Name" $^ &gt; $@
+</code></pre>
+
+老实说，dox确实是一个很接近理想的Javascript文档生成器，可惜的是它只是在理念上符合需求；即便不够成熟，项目的更新频率是列举出来的Document Generator中最低的；并且，其易用性也是最差的。显然，相对于expressjs，这个项目对visionmedia的重要性可是要差得远了。
+
+
+
+要发扬Geek精神，唯一的做法，也许只有fork dox，自己改造一个符合需求的dox罢~
+
+
+
+<hr />
+
+<h2><strong>JSDuck</strong></h2>
+
+<ul>
+<li>提供者：sencha labs</li>
+<li>地址：<a href="https://github.com/visionmedia/dox" title="前往github">前往</a></li>
+<li>版本：3.11.0, 4.0beta</li>
+<li>官方介绍：</li>
+</ul>
+
+<blockquote>
+  API documentation generator for Sencha JavaScript frameworks. JSDuck aims to be a better documentation generator for Ext JS than the old ext-doc was. It is used by Sencha to document Ext JS 4, Sencha Touch and several other products.
+
+
+  
+  翻译：为Sencha Javascript框架设计的API文档生成器。 JSDuck。。。。。。。就是讲比以前的好，为Sencha很多系列产品都提供文档支持。
+
+
+</blockquote>
+
+<ul>
+<li>输出格式：什么！！！？翻了半天文档，愣是没找到？望牛人补充[8.1更新,经过使用,jsduck输出的是html格式,样式可以参照sencha labs的Ext JS文档]</li>
+<li>需要环境: Ruby 1.8</li>
+<li>近期活跃度：<a href="https://github.com/senchalabs/jsduck/graphs/commit-activity" title="github代码提交频率">查看</a></li>
+</ul>
+
+JSDuck与Dox一样支持在注释中使用MarkDown语法。
+
+
+
+如果你使用Ext JS 4库的话，JSDuck能自动检测其中的一些方法，并最终出现在文档里，能与之很好的配合。如果不使用的话，她同样支持与JSDoc类似的tag标记语法（这个似乎是所有文档生成器的标配）。
+
+
+
+高级的用法甚至能够生成guide页面、welcome页面、插入图片和视频（支持的vimeo显然被墙了）
+
+
+
+4.0beta版提供了自动检测功能，能从代码而不是注释中自动抽取需要的信息，生成文档。（有点抽象？可以看看这个<a href="https://github.com/senchalabs/jsduck/wiki/4.0-beta" title="前往查看">例子</a>）
+
+
+
+JSDuck支持SCSS语法。虽然支持是实验性的，不过已在其Touch框架里使用了一段时间。
+
+
+
+<strong>8.22更新</strong>JSDuck已发布4.0，具体变动有待考证。
+
+
+
+<hr />
+
+<h2><strong>总结</strong></h2>
+
+这篇文章只是分析了下几种比较常用Javascript的文档生成器的<strong>元信息</strong>.对于一个文档生成的框架来说,易用性以及生成的文档质量是最为重要的.而这却需要使用中细细体会.
+
+
+
+有童鞋要问,那一开始如何选择呢? 要Spencer回答的话,第一个标准是又简单又能符合需求的,其次就是看这个文档生成器目前的发展趋势了.
+
+
+
+祝找到好用的Javascript文档生成器,有遗漏或者错误欢迎补充及指正.
+
+
+
+发稿日期：2012-7-18
+
+
+
+8.1补充，现在有想法把每种文档生成的结果弄个小网站，可以很直观的比较。
+
+
+
+<hr />
+
+<strong>8.22更新</strong> more to add: <a href="http://jashkenas.github.com/docco/" title="check docoo">docco</a>
+
+

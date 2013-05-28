@@ -1,0 +1,91 @@
+---
+layout: post
+title: less css三种使用方法比较
+tags:
+- css
+- less
+- lesscss
+- 比较
+status: publish
+type: post
+published: true
+meta:
+  _yoast_wpseo_linkdex: '48'
+  _yoast_wpseo_meta-robots-noindex: '0'
+  _yoast_wpseo_metadesc: 本文介绍并比较了使用less css的三种方法。直接引用less.js，使用编译工具以及在服务器端使用less。简单分析了下优缺点。From
+    kokiya.com By Spencer。
+  _yoast_wpseo_title: less css三种使用方法比较 | Spencer's Blog
+  _yoast_wpseo_focuskw: less css 三种使用方法比较
+  _edit_last: '1'
+  _yoast_wpseo_meta-robots-nofollow: '0'
+  _yoast_wpseo_meta-robots-adv: none
+  _yoast_wpseo_sitemap-include: '-'
+  _yoast_wpseo_sitemap-prio: '-'
+  _yoast_wpseo_canonical: ''
+  _yoast_wpseo_redirect: ''
+  duoshuo_thread_id: '415242'
+---
+本文介绍并比较了使用less的三种方法。
+
+&nbsp;
+<h4>什么是less？</h4>
+<blockquote>“LESS是一种 动态 样式 语言.
+
+LESS 将 CSS 赋予了动态语言的特性，如 变量， 继承， 运算， 函数. LESS 既可以在 客户端 上运行 (支持IE 6+, Webkit, Firefox)，也可以借助Node.js或者Rhino在服务端运行。”</blockquote>
+使用less能节省css的编写时间，复用css代码，用的时间越长，收益越大。
+
+网址：<a title="less" href="http://lesscss.org" target="_blank">lesscss.org</a>，中文：<a title="less cn" href="http://lesscss.net" target="_blank">lesscss.net</a>
+
+&nbsp;
+
+<!--more-->
+
+假设手头上有一个styles.less文件，现在要让浏览器认得这货。
+
+由于编写的是less文件，要将less文件“编译”成css文件才能为浏览器所用。目前我大概知道三种“编译”的方法。
+
+&nbsp;
+
+<strong>第一种</strong>，在html文件中引入less.js和styles.less文件。访问官网的话第一眼就能看到这种方法。
+
+&nbsp;
+<pre class="prettyprint"><code>&lt;link rel="stylesheet/less" type="text/css" href="styles.less"&gt;  </code>
+<code>&lt;script src="less.js" type="text/javascript"&gt;&lt;/script&gt;</code></pre>
+&nbsp;
+
+<strong>第二种</strong>，使用工具编译less文件。
+
+<a title="less工具汇总" href="http://less.cnodejs.net/tools" target="_blank">这里</a>汇总了less编译的一系列工具。这些工具基本会以以下方式工作：
+
+监测指定的less文件的变化，如果检测到变化，则自动将less文件输出成相应的css文件。并且大多数工具都提供一定的debug功能。
+
+&nbsp;
+
+<strong>第三种</strong>，服务器端编译less。
+
+对于nodejs服务器，要在服务器端使用less，首先使用npm安装，运行：
+<pre class="prettyprint">npm install less@latest</pre>
+然后，可以require less模块，并调用其提供的函数，以下是官网代码：
+<pre class="prettyprint">var less = require('less');
+
+less.render('.class { width: 1 + 1 }', function (e, css) {
+    console.log(css);
+});</pre>
+对于服务器上的less文件，可以使用fs模块的readFile命令读取该文件，并将结果传递到less.render的第一个参数。然后再用fs的写文件的功能，输出成css文件。或者直接生成http response包，返回客户端。
+
+&nbsp;
+
+下面来谈谈优缺点。
+
+第一种方法。
+<p style="padding-left: 30px;">优点：方便。。。好吧，就这样。其他优点我还真。。想不出来了。--b（不代表没有啊）</p>
+<p style="padding-left: 30px;">缺点：首先的一条就是影响页面加载的速度，浏览器首先要下载额外的less.js文件，然后还要将styles.less通过javascript编译成styles.css。这两个多出来的步骤显然会影响性能。其次，也是很关键的一点，如果网络出现点小岔子，less.js文件没有加载成功（这个是常有的事，特别在天朝，你懂的），或者styles.less编译时出错，页面就完全没有样式了！不能提供后备方法，是这种方案的一大缺点。</p>
+第二种方法。也是我目前正在使用的方法。
+<p style="padding-left: 30px;">优点：一一个，编译过程中，能提供一定debug功能，写错代码是常有的事，关键要知道哪里写错了。二一个，由于是自动编译，所以最后的成品是css文件，客户端不用因为见到不认识的less文件而大声惊呼不认识。三一个，在电脑上配置好的话，其实使用还是蛮方便的。</p>
+<p style="padding-left: 30px;">缺点：如果要在多个地点进行开发，那么在每个地点都要花个10分钟~15分钟下载、安装软件，并进行配置。</p>
+第三种方法。
+<p style="padding-left: 30px;">优点：高级货，在服务器端的代码上耍点小把戏，那么你甚至可以让号称“动态”的样式语言变得更动态。可以根据用户的不同请求，在服务器端修改less文件，然后再编译成css文件，返回至客户端。（好像javascript也能做到这些。汗）。客户端同样不用麻烦处理less之类的不认识文件。</p>
+<p style="padding-left: 30px;">缺点：一一个，烦。二一个，消耗服务器资源。三一个，编译出错的话，你可能要自己写一个处理error的函数。四一个，何时编译less文件成为一个问题，每次有客户请求就编译一次less文件显然效率比较低，但是根据less文件的变化来编译又好像没有放在服务器上编译的必要。。。。</p>
+&nbsp;
+
+欢迎补充。

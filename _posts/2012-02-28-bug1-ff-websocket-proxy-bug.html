@@ -1,0 +1,29 @@
+---
+layout: post
+title: bug#1 ff websocket proxy bug
+tags:
+- nodejs
+- 状态
+status: publish
+type: post
+published: true
+meta:
+  _yoast_wpseo_linkdex: '0'
+  _edit_last: '1'
+  _yoast_wpseo_focuskw: ''
+  _yoast_wpseo_title: ''
+  _yoast_wpseo_metadesc: ''
+  _yoast_wpseo_meta-robots-noindex: '0'
+  _yoast_wpseo_meta-robots-nofollow: '0'
+  _yoast_wpseo_meta-robots-adv: none
+  _yoast_wpseo_sitemap-include: '-'
+  _yoast_wpseo_sitemap-prio: '-'
+  _yoast_wpseo_canonical: ''
+  _yoast_wpseo_redirect: ''
+  duoshuo_thread_id: '334792'
+---
+我想我大概找到bug了。情况大概是这样：本地架设的服务器很好，到了web端就不行。因为no.de的服务器不是独立ip的，所以要使用到某种代理：node-http-proxy，而这会导致ff对于http包头的解析不正确。ff11会引用最新的websocket标准，看看到时候会不会解决该问题。要不然就换个服务器。自己搞估计是搞不来了。所以暂时先把这个bug放一放，你要在内网用应该还是没问题的。
+
+国外友人对于该问题的讨论：<a href="http://github.com/nodejitsu/node-http-proxy/issues/97">github.com/nodejitsu/node-http-proxy/issues/97</a>
+
+websocket <a href="http://en.wikipedia.org/wiki/WebSocket">wiki</a>
